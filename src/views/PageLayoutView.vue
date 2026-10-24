@@ -1,8 +1,18 @@
+<script setup lang="ts">
+import AppPreviewer from '@/components/AppPreviewer/AppPreviewer.vue'
+</script>
+
 <template>
   <div class="layout-wrapper">
-    <aside class="layout-left"><div class="placeholder">左侧物料面板</div></aside>
-    <section class="layout-center"><div class="placeholder">画布区</div></section>
-    <aside class="layout-right"><div class="placeholder">右侧配置面板</div></aside>
+    <aside class="layout-left">
+      <div class="placeholder">左侧物料面板</div>
+    </aside>
+
+    <AppPreviewer />
+
+    <aside class="layout-right">
+      <div class="placeholder">右侧配置面板</div>
+    </aside>
   </div>
 </template>
 
@@ -17,13 +27,6 @@
   width: 320px;
   border-right: 1px solid var(--color-gray-300);
   background-color: var(--color-gray-100);
-}
-
-.layout-center {
-  flex: 1;
-  min-width: 0;
-  overflow: auto;
-  background-color: var(--color-white);
 }
 
 .layout-right {
