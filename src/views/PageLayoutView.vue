@@ -1,11 +1,12 @@
 <script setup lang="ts">
+import AppLeftPanel from '@/components/AppLeftPanel/AppLeftPanel.vue'
 import AppPreviewer from '@/components/AppPreviewer/AppPreviewer.vue'
 </script>
 
 <template>
   <div class="layout-wrapper">
     <aside class="layout-left">
-      <div class="placeholder">左侧物料面板</div>
+      <AppLeftPanel />
     </aside>
 
     <AppPreviewer />
