@@ -1,4 +1,70 @@
 export type BasicBlockType = 'heroTitle' | 'view' | 'chart' | 'quote' | 'image'
 export type ExternalBlockType = 'button' | 'form' | 'notes'
-
 export type BlockType = BasicBlockType | ExternalBlockType
+
+export interface BaseBlockInfo {
+  id: string
+  label: string
+}
+
+export interface QuoteBlockInfo extends BaseBlockInfo {
+  type: 'quote'
+  props: {
+    content: string
+    status: 'success' | 'warning' | 'error'
+  }
+}
+
+export interface HeroTitleBlockInfo extends BaseBlockInfo {
+  type: 'heroTitle'
+  props: {
+    content: string
+  }
+}
+
+export interface ImageBlockInfo extends BaseBlockInfo {
+  type: 'image'
+  props: {
+    url: string
+  }
+}
+
+export interface ButtonBlockInfo extends BaseBlockInfo {
+  type: 'button'
+  props: {
+    content: string
+  }
+}
+
+export interface NotesBlockInfo extends BaseBlockInfo {
+  type: 'notes'
+  props: {
+    content: string
+  }
+}
+
+// 这几个物料还没实现，props 先空着（注意：`{}` 是个很松的类型，详见第六节）
+export interface ViewBlockInfo extends BaseBlockInfo {
+  type: 'view'
+  props: Record<string, never>
+}
+
+export interface ChartBlockInfo extends BaseBlockInfo {
+  type: 'chart'
+  props: Record<string, never>
+}
+
+export interface FormBlockInfo extends BaseBlockInfo {
+  type: 'form'
+  props: Record<string, never>
+}
+
+export type BlockInfo =
+  | QuoteBlockInfo
+  | HeroTitleBlockInfo
+  | ImageBlockInfo
+  | ButtonBlockInfo
+  | NotesBlockInfo
+  | ViewBlockInfo
+  | ChartBlockInfo
+  | FormBlockInfo

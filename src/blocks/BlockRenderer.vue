@@ -27,10 +27,7 @@ const applyDrag = <T extends any[]>(arr: T, dragResult: DropResult) => {
   if (addedIndex === null) return result
 
   if (addedIndex !== null && removedIndex === null) {
-    result.splice(addedIndex, 0, {
-      id: `${Math.random()}`,
-      ...payload
-    })
+    result.splice(addedIndex, 0, payload)      // payload 自带 id
   }
 
   if (addedIndex !== null && removedIndex !== null) {

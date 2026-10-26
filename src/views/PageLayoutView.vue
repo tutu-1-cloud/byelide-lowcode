@@ -5,10 +5,7 @@ import AppPreviewer from '@/components/AppPreviewer/AppPreviewer.vue'
 
 <template>
   <div class="layout-wrapper">
-    <aside class="layout-left">
-      <AppLeftPanel />
-    </aside>
-
+    <AppLeftPanel />
     <AppPreviewer />
 
     <aside class="layout-right">
@@ -21,13 +18,6 @@ import AppPreviewer from '@/components/AppPreviewer/AppPreviewer.vue'
 .layout-wrapper {
   display: flex;
   height: 100%;
-}
-
-.layout-left {
-  flex-shrink: 0;
-  width: 320px;
-  border-right: 1px solid var(--color-gray-300);
-  background-color: var(--color-gray-100);
 }
 
 .layout-right {

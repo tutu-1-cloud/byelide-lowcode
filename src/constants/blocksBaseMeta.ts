@@ -9,6 +9,8 @@ import {
   TitleLevel
 } from '@icon-park/vue-next'
 import type { Icon } from '@icon-park/vue-next/lib/runtime'
+import { nanoid } from 'nanoid'
+
 
 import type { BlockType } from '@/types/block'
 
@@ -26,3 +28,10 @@ export const blocksBaseMetaList: { type: BlockType; label: string; icon: Icon }[
 export const blocksBaseMeta = Object.fromEntries(
   blocksBaseMetaList.map((item) => [item.type, item])
 )
+
+export const getBlocksDefaultData = (type: BlockType) => ({
+  id: nanoid(),
+  type,
+  label: blocksBaseMeta[type].label,
+  props: {}
+})

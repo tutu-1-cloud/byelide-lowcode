@@ -1,72 +1,115 @@
 <script setup lang="ts">
-import type { DropResult } from 'smooth-dnd'
-import { ref, toRaw } from 'vue'
+import { Page, SmartOptimization } from '@icon-park/vue-next'
+import { ref } from 'vue'
 
-import { arrayMove } from '@/utils/array'
+import BlocksDrawer from '@/components/AppLeftPanel/BlocksDrawer.vue'
+import OutlineDrawer from '@/components/AppLeftPanel/OutlineDrawer.vue'
 
-import { SmoothDndContainer } from '../SmoothDnd/SmoothDndContainer'
-import { SmoothDndDraggable } from '../SmoothDnd/SmoothDndDraggable'
+type DrawerMode = 'outline' | 'blocks' | null
 
-const items = ref(
-  Array.from({ length: 8 }, (_, i) => ({
-    id: `item-${i + 1}`,
-    label: `物料 ${i + 1}`
-  }))
-)
+const isDrawerShown = ref<DrawerMode>('outline')
 
-const onDrop = (dropResult: DropResult) => {
-  const { removedIndex, addedIndex } = dropResult
-
-  if (removedIndex === null || addedIndex === null) return
-
-  items.value = arrayMove(toRaw(items.value), removedIndex, addedIndex)
+const toggleDrawer = (drawerMode: DrawerMode = null) => {
+  if (isDrawerShown.value === drawerMode) {
+    isDrawerShown.value = null
+    return
+  }
+  isDrawerShown.value = drawerMode
 }
 </script>
 
 <template>
-  <div class="left-panel-wrapper">
-    <SmoothDndContainer
-      class="dnd-container"
-      group-name="demo"
-      orientation="vertical"
-      tag="div"
-      @drop="onDrop"
-    >
-      <SmoothDndDraggable v-for="item in items" :key="item.id">
-        <div class="dnd-item">{{ item.label }}</div>
-      </SmoothDndDraggable>
-    </SmoothDndContainer>
+  <div class="app-left-panel-wrapper">
+    <div class="app-left-panel-bar">
+      <div
+        :class="['app-left-panel-item', isDrawerShown === 'outline' && 'active']"
+        @click="toggleDrawer('outline')"
+      >
+        <Page size="20" />
+      </div>
+      <div
+        :class="['app-left-panel-item', isDrawerShown === 'blocks' && 'active']"
+        @click="toggleDrawer('blocks')"
+      >
+        <SmartOptimization size="20" />
+      </div>
+    </div>
+
+    <Transition name="app-left-panel-drawer">
+      <div v-if="!!isDrawerShown" class="app-left-panel-drawer">
+        <div class="app-left-panel-drawer-content">
+          <component
+            :is="isDrawerShown === 'outline' ? OutlineDrawer : BlocksDrawer"
+          />
+        </div>
+      </div>
+    </Transition>
   </div>
 </template>
 
 <style scoped>
-.left-panel-wrapper {
-  width: 100%;
+.app-left-panel-wrapper {
+  position: relative;
+  display: flex;
+  z-index: 4;
   height: 100%;
-  overflow-y: auto;
-  padding: 12px;
-  box-sizing: border-box;
+  box-shadow: var(--color-gray-300) 1px 0 0;
 }
 
-.dnd-container {
+.app-left-panel-bar {
+  width: 60px;
+  height: 100%;
+  padding-top: 16px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  align-items: center;
 }
 
-.dnd-item {
+.app-left-panel-item {
   display: flex;
+  margin: 8px 0;
   align-items: center;
-  height: 48px;
-  padding: 0 12px;
-  border: 1px solid var(--color-gray-300);
-  border-radius: 6px;
-  background-color: var(--color-white);
-  cursor: grab;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-gray-700);
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
   user-select: none;
 }
 
-.dnd-item:active {
-  cursor: grabbing;
+.app-left-panel-item.active {
+  color: var(--color-text);
+  background-color: var(--color-gray-200);
+}
+
+.app-left-panel-item:hover {
+  background-color: var(--color-gray-200);
+}
+
+.app-left-panel-drawer {
+  width: calc(var(--panel-width) - 60px);
+  height: 100%;
+  box-shadow: var(--color-gray-300) 1px 0 0;
+  overflow: hidden;
+}
+
+.app-left-panel-drawer-enter-active,
+.app-left-panel-drawer-leave-active {
+  transition: width 0.1s cubic-bezier(0.3, 0.1, 0.3, 1);
+}
+
+.app-left-panel-drawer-enter-from,
+.app-left-panel-drawer-leave-to {
+  width: 0;
+}
+
+.app-left-panel-drawer-content {
+  width: calc(var(--panel-width) - 60px);
+  height: 100%;
+  padding: 16px;
+  box-sizing: border-box;
 }
 </style>
