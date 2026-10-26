@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { h } from 'vue'
+import type { FormBlockInfo } from '@/types/block'
 
 type Field = {
   label: string
   id: string
   type: 'input' | 'select'
 }
+
+defineProps<{ blockInfo: FormBlockInfo }>()
 
 const fieldMap = {
     input: ()=>h('input'),

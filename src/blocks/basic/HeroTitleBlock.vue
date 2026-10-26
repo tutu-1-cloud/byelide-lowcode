@@ -1,5 +1,11 @@
+<script setup lang="ts">
+import type { HeroTitleBlockInfo } from '@/types/block'
+
+defineProps<{ blockInfo: HeroTitleBlockInfo }>()
+</script>
+
 <template>
-  <h1 class="hero-title">Hero Title Block</h1>
+  <h1 class="hero-title">{{ blockInfo.props.content }}</h1>
 </template>
 
 <style scoped>

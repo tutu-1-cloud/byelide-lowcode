@@ -1,3 +1,9 @@
+<script setup lang="ts">
+import type { ViewBlockInfo } from '@/types/block'
+
+defineProps<{ blockInfo: ViewBlockInfo }>()
+</script>
+
 <template>
   <div class="view-block">View Block</div>
 </template>

@@ -1,3 +1,9 @@
+<script setup lang="ts">
+import type { NotesBlockInfo } from '@/types/block'
+
+defineProps<{ blockInfo: NotesBlockInfo }>()
+</script>
+
 <template>
   <div class="notes">Notes Block（富文本编辑器待接入）</div>
 </template>

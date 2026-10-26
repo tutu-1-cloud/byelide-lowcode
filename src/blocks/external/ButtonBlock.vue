@@ -1,14 +1,11 @@
 <script setup lang="ts">
-const props = defineProps({
-  title: { type: String, required: true },
-  onClick: { type: Function, required: true }
-})
+import type { ButtonBlockInfo } from '@/types/block'
 
-console.log('🚀 ~ ButtonBlock props:', props)
+defineProps<{ blockInfo: ButtonBlockInfo }>()
 </script>
 
 <template>
-  <div class="button">Button</div>
+  <div class="button">{{ blockInfo.props.content }}</div>
 </template>
 
 <style scoped>

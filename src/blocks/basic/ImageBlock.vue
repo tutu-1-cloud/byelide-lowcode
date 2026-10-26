@@ -1,8 +1,12 @@
+<script setup lang="ts">
+import type { ImageBlockInfo } from '@/types/block'
+
+defineProps<{ blockInfo: ImageBlockInfo }>()
+</script>
+
 <template>
   <div class="image">
-    <img
-      src="https://images.pexels.com/photos/2577274/pexels-photo-2577274.jpeg?auto=compress&cs=tinysrgb&w=1600"
-    />
+    <img :src="blockInfo.props.url" />
   </div>
 </template>
 

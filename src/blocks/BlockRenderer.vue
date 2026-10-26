@@ -17,7 +17,7 @@ const envStore = useEnvStore()
 const appEditorStore = useAppEditorStore()
 
 const { currentBlockId, blocks } = storeToRefs(appEditorStore)
-const { selectBlock, updateBlocks } = appEditorStore
+const { selectBlock, updateBlocks,removeBlock } = appEditorStore
 
 const applyDrag = <T extends any[]>(arr: T, dragResult: DropResult) => {
   const { removedIndex, addedIndex, payload } = dragResult
@@ -48,7 +48,7 @@ const applyDrag = <T extends any[]>(arr: T, dragResult: DropResult) => {
   >
     <SmoothDndDraggable v-for="(block, i) in blocks" :key="block.id">
       <div class="block-wrapper" @click.stop="selectBlock(block.id)">
-        <component :is="$blocksMap[block.type].material" class="block" />
+        <component :is="$blocksMap[block.type].material" :blockInfo="block" class="block" />
 
         <div
           :class="[
@@ -60,7 +60,7 @@ const applyDrag = <T extends any[]>(arr: T, dragResult: DropResult) => {
             <div class="block-toolbar-item handle">
               <Drag />
             </div>
-            <div class="block-toolbar-item" @click="blocks.splice(i, 1)">
+            <div class="block-toolbar-item" @click.stop="removeBlock(block.id)">
               <Delete />
             </div>
           </div>

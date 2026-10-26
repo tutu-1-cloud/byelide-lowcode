@@ -1,3 +1,9 @@
+<script setup lang="ts">
+import type { ChartBlockInfo } from '@/types/block'
+
+defineProps<{ blockInfo: ChartBlockInfo }>()
+</script>
+
 <template>
   <div class="chart-block">Chart Block</div>
 </template>
