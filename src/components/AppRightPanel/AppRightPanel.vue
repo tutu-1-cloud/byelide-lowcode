@@ -5,26 +5,39 @@ import type { Component } from 'vue'
 
 import { blocksBaseMeta } from '@/constants/blocksBaseMeta'
 import { useAppEditorStore } from '@/stores/appEditor'
+import type { BlockType } from '@/types/block'
 
+import BaseSetting from './BaseSetting.vue'
+import ButtonSetting from './ButtonSetting.vue'
+import HeroTitleSetting from './HeroTitleSetting.vue'
+import ImageSetting from './ImageSetting.vue'
+import NotesSetting from './NotesSetting.vue'
 import QuoteSetting from './QuoteSetting.vue'
 
 const store = useAppEditorStore()
 const { selectedBlock } = storeToRefs(store)
 
-const settingPanel = computed<Component | null>(() => {
-  if (!selectedBlock.value) return null
+const settingMap: Partial<Record<BlockType, Component>> = {
+  quote: QuoteSetting,
+  image: ImageSetting,
+  heroTitle: HeroTitleSetting,
+  button: ButtonSetting,
+  notes: NotesSetting
+}
 
-  switch (selectedBlock.value.type) {
-    case 'quote':
-      return QuoteSetting
-    default:
-      return null
-  }
+const settingPanel = computed(() => {
+  if (!selectedBlock.value) return null
+  return settingMap[selectedBlock.value.type] ?? null
 })
 
-const handleChange = (patch: Record<string, unknown>) => {
+const handlePropsChange = (patch: object) => {
   if (!selectedBlock.value) return
   store.updateBlockProps(selectedBlock.value.id, patch)
+}
+
+const handleLabelChange = (label: string) => {
+  if (!selectedBlock.value) return
+  store.updateBlockLabel(selectedBlock.value.id, label)
 }
 </script>
 
@@ -36,11 +49,25 @@ const handleChange = (patch: Record<string, unknown>) => {
       </div>
 
       <div class="app-right-panel-content">
-        <component :is="settingPanel" :block-info="selectedBlock" @change="handleChange" />
+        <div class="setting-section">
+          <div class="setting-section-title">基础</div>
+          <BaseSetting :block-info="selectedBlock" @change-label="handleLabelChange" />
+        </div>
 
-        <p v-if="!settingPanel" class="hint">
-          「{{ blocksBaseMeta[selectedBlock.type].label }}」的配置面板还没做
-        </p>
+        <div class="setting-section">
+          <div class="setting-section-title">专属</div>
+
+          <component
+            :is="settingPanel"
+            v-if="settingPanel"
+            :block-info="selectedBlock"
+            @change="handlePropsChange"
+          />
+
+          <p v-else class="hint">
+            「{{ blocksBaseMeta[selectedBlock.type].label }}」的专属配置待补充
+          </p>
+        </div>
       </div>
     </template>
 
@@ -69,10 +96,25 @@ const handleChange = (patch: Record<string, unknown>) => {
 
 .app-right-panel-content {
   padding: 0 16px 0 20px;
+  overflow-y: auto;
+  height: calc(100% - 44px);
+  box-sizing: border-box;
+}
+
+.setting-section {
+  margin-bottom: 16px;
+}
+
+.setting-section-title {
+  margin-bottom: 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--color-gray-200);
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-gray-700);
 }
 
 .hint {
-  margin-top: 12px;
   font-size: var(--font-size-small);
   color: var(--color-gray-700);
 }

@@ -46,7 +46,7 @@ const applyDrag = <T extends any[]>(arr: T, dragResult: DropResult) => {
     tag="div"
     @drop="updateBlocks(applyDrag(toRaw(blocks), $event))"
   >
-    <SmoothDndDraggable v-for="(block, i) in blocks" :key="block.id">
+    <SmoothDndDraggable v-for="(block) in blocks" :key="block.id">
       <div class="block-wrapper" @click.stop="selectBlock(block.id)">
         <component :is="$blocksMap[block.type].material" :blockInfo="block" class="block" />
 

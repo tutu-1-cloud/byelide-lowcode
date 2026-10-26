@@ -25,7 +25,7 @@ export const useAppEditorStore = defineStore('appEditor', () => {
     blocks.value = newBlocks
   }
 
-  function updateBlockProps(id: string, patch: Record<string, unknown>) {
+  function updateBlockProps(id: string, patch: object) {
     const target = blocks.value.find((b) => b.id === id)
     if (!target) return
     Object.assign(target.props, patch)
@@ -38,6 +38,12 @@ export const useAppEditorStore = defineStore('appEditor', () => {
     }
   }
 
+  function updateBlockLabel(id: string, label: string) {
+    const target = blocks.value.find((b) => b.id === id)
+    if (!target) return
+    target.label = label
+  }
+
   return {
     blocks,
     currentBlockId,
@@ -46,6 +52,7 @@ export const useAppEditorStore = defineStore('appEditor', () => {
     addBlock,
     updateBlocks,
     updateBlockProps,
-    removeBlock
+    removeBlock,
+    updateBlockLabel
   }
 })

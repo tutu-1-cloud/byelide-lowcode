@@ -2,6 +2,10 @@
 import { SmoothDndContainer } from '@/components/SmoothDnd/SmoothDndContainer'
 import { SmoothDndDraggable } from '@/components/SmoothDnd/SmoothDndDraggable'
 import { blocksBaseMetaList, getBlocksDefaultData } from '@/constants/blocksBaseMeta'
+
+function getChildPayload(index: number) {
+  return getBlocksDefaultData(blocksBaseMetaList[index].type)
+}
 </script>
 
 <template>
@@ -12,7 +16,7 @@ import { blocksBaseMetaList, getBlocksDefaultData } from '@/constants/blocksBase
       behaviour="copy"
       group-name="blocks"
       orientation="vertical"
-      :get-child-payload="(index: number) => getBlocksDefaultData(blocksBaseMetaList[index].type)"
+      :get-child-payload="getChildPayload"
       tag="div"
       class="blocks-list"
     >
