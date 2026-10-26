@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { blocks } from '@/mocks/blocks'
+import BlockRenderer from '@/blocks/BlockRenderer.vue'
+
 import type { PreviewType } from './type'
 import PreviewModeSwitcher from './PreviewModeSwitcher.vue'
 
@@ -31,12 +32,7 @@ function greet(mode: PreviewType) {
       </div>
 
       <div class="layout-runner-content">
-        <component
-          :is="$blocksMap[block.type].material"
-          v-for="block in blocks"
-          :key="block.id"
-          class="block"
-        />
+        <BlockRenderer />
       </div>
     </div>
   </div>
