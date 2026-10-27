@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
-import { computed } from 'vue'
+import { computed, toRaw } from 'vue'
 import type { Component } from 'vue'
 
 import { blocksBaseMeta } from '@/constants/blocksBaseMeta'
@@ -9,11 +9,12 @@ import type { BlockType } from '@/types/block'
 
 import BaseSetting from './BaseSetting.vue'
 import ButtonSetting from './ButtonSetting.vue'
+import ChartSetting from './ChartSetting.vue'
 import HeroTitleSetting from './HeroTitleSetting.vue'
 import ImageSetting from './ImageSetting.vue'
 import NotesSetting from './NotesSetting.vue'
 import QuoteSetting from './QuoteSetting.vue'
-import ChartSetting from './ChartSetting.vue'
+import SchemaExporter from './SchemaExporter.vue'
 
 const store = useAppEditorStore()
 const { selectedBlock } = storeToRefs(store)
@@ -32,6 +33,12 @@ const settingPanel = computed(() => {
   return settingMap[selectedBlock.value.type] ?? null
 })
 
+const blockSchema = computed<Record<string, unknown> | null>(() => {
+  const block = selectedBlock.value
+  if (!block) return null
+  return JSON.parse(JSON.stringify(toRaw(block)))
+})
+
 const handlePropsChange = (patch: object) => {
   if (!selectedBlock.value) return
   store.updateBlockProps(selectedBlock.value.id, patch)
@@ -45,12 +52,12 @@ const handleLabelChange = (label: string) => {
 
 <template>
   <div class="app-right-panel-wrapper">
-    <template v-if="selectedBlock">
-      <div class="app-right-panel-header">
-        {{ blocksBaseMeta[selectedBlock.type].label }}
-      </div>
+    <div v-if="selectedBlock" class="app-right-panel-header">
+      {{ blocksBaseMeta[selectedBlock.type].label }}
+    </div>
 
-      <div class="app-right-panel-content">
+    <div class="app-right-panel-content tiny-scrollbar">
+      <template v-if="selectedBlock">
         <div class="setting-section">
           <div class="setting-section-title">基础</div>
           <BaseSetting :block-info="selectedBlock" @change-label="handleLabelChange" />
@@ -58,22 +65,29 @@ const handleLabelChange = (label: string) => {
 
         <div class="setting-section">
           <div class="setting-section-title">专属</div>
-
           <component
             :is="settingPanel"
             v-if="settingPanel"
             :block-info="selectedBlock"
             @change="handlePropsChange"
           />
-
           <p v-else class="hint">
             「{{ blocksBaseMeta[selectedBlock.type].label }}」的专属配置待补充
           </p>
         </div>
-      </div>
-    </template>
 
-    <div v-else class="empty-panel">选中一个块开始配置</div>
+        <div class="setting-section">
+          <div class="setting-section-title">出码</div>
+          <SchemaExporter
+            v-if="blockSchema"
+            :data="blockSchema"
+            :title="`当前块 · ${selectedBlock.type}`"
+          />
+        </div>
+      </template>
+
+      <p v-else class="empty-tip">选中一个块开始配置</p>
+    </div>
   </div>
 </template>
 
@@ -126,6 +140,13 @@ const handleLabelChange = (label: string) => {
   align-items: center;
   justify-content: center;
   height: 100%;
+  font-size: var(--font-size-small);
+  color: var(--color-gray-600);
+}
+
+.empty-tip {
+  padding: 24px 0;
+  text-align: center;
   font-size: var(--font-size-small);
   color: var(--color-gray-600);
 }

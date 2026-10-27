@@ -2,6 +2,7 @@ export type BasicBlockType = 'heroTitle' | 'view' | 'chart' | 'quote' | 'image'
 export type ExternalBlockType = 'button' | 'form' | 'notes'
 export type BlockType = BasicBlockType | ExternalBlockType
 export type ChartKind = 'line' | 'bar' | 'pie'
+export type QuoteBlockStatus = 'success' | 'warning' | 'error'
 
 export interface BaseBlockInfo {
   id: string
@@ -12,7 +13,7 @@ export interface QuoteBlockInfo extends BaseBlockInfo {
   type: 'quote'
   props: {
     content: string
-    status: 'success' | 'warning' | 'error'
+    status: QuoteBlockStatus
   }
 }
 
