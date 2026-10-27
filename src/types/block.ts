@@ -1,6 +1,7 @@
 export type BasicBlockType = 'heroTitle' | 'view' | 'chart' | 'quote' | 'image'
 export type ExternalBlockType = 'button' | 'form' | 'notes'
 export type BlockType = BasicBlockType | ExternalBlockType
+export type ChartKind = 'line' | 'bar' | 'pie'
 
 export interface BaseBlockInfo {
   id: string
@@ -51,7 +52,13 @@ export interface ViewBlockInfo extends BaseBlockInfo {
 
 export interface ChartBlockInfo extends BaseBlockInfo {
   type: 'chart'
-  props: Record<string, never>
+  props: {
+    chartKind: ChartKind
+    data: {
+      label: string
+      value: number
+    }[]
+  }
 }
 
 export interface FormBlockInfo extends BaseBlockInfo {

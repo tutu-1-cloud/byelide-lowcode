@@ -22,7 +22,23 @@ export const blocks: BlockInfo[] = [
     }
   },
   { id: '4', type: 'view', label: '视图', props: {} },
-  { id: '5', type: 'chart', label: '图表', props: {} },
+  {
+    id: '5',
+    type: 'chart',
+    label: '图表',
+    props: {
+      chartKind: 'line',
+      data: [
+        { label: 'Mon', value: 140 },
+        { label: 'Tue', value: 232 },
+        { label: 'Wed', value: 101 },
+        { label: 'Thu', value: 264 },
+        { label: 'Fri', value: 90 },
+        { label: 'Sat', value: 340 },
+        { label: 'Sun', value: 250 }
+      ]
+    }
+  },
   { id: '6', type: 'button', label: '按钮', props: { content: 'Button' } },
   { id: '7', type: 'form', label: '表单', props: {} },
   { id: '8', type: 'notes', label: '笔记', props: { content: 'Notes Block' } }

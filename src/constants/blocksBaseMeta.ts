@@ -51,8 +51,26 @@ export const getBlocksDefaultData = (type: BlockType): BlockInfo => {
     case 'notes':
       return { id, type, label: '笔记', props: { content: '' } }
     case 'view':
+      return { id, type, label: '视图', props: {} }
     case 'chart':
+      return {
+        id,
+        type,
+        label: '图表',
+        props: {
+          chartKind: 'line',
+          data: [
+            { label: 'Mon', value: 120 },
+            { label: 'Tue', value: 200 },
+            { label: 'Wed', value: 150 },
+            { label: 'Thu', value: 80 },
+            { label: 'Fri', value: 260 },
+            { label: 'Sat', value: 180 },
+            { label: 'Sun', value: 220 }
+          ]
+        }
+      }
     case 'form':
-      return { id, type, label: blocksBaseMeta[type].label, props: {} }
+      return { id, type, label: '表单', props: {} }
   }
 }
