@@ -13,6 +13,7 @@ import HeroTitleSetting from './HeroTitleSetting.vue'
 import ImageSetting from './ImageSetting.vue'
 import NotesSetting from './NotesSetting.vue'
 import QuoteSetting from './QuoteSetting.vue'
+import ChartSetting from './ChartSetting.vue'
 
 const store = useAppEditorStore()
 const { selectedBlock } = storeToRefs(store)
@@ -22,7 +23,8 @@ const settingMap: Partial<Record<BlockType, Component>> = {
   image: ImageSetting,
   heroTitle: HeroTitleSetting,
   button: ButtonSetting,
-  notes: NotesSetting
+  notes: NotesSetting,
+  chart: ChartSetting
 }
 
 const settingPanel = computed(() => {
