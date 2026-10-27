@@ -11,7 +11,15 @@ const router = createRouter({
       children: [
         { path: '', redirect: '/app/layout' },
         { path: 'layout', name: 'layout', component: () => import('../views/PageLayoutView.vue') },
-        { path: 'dataSource', name: 'dataSource', component: () => import('../views/DataSourceView.vue') },
+        { 
+          path: 'dataSource', 
+          name: 'dataSource', 
+          redirect: '/app/dataSource/1',
+          component: () => import('../views/DataSourceView.vue'),
+          children:[
+            { path: ':id', name: 'dataSourceDetail', component: () => import('../views/DataSourceContent/DataSourceContent.vue') },
+          ]
+        },
         { path: 'actions', name: 'actions', component: () => import('../views/ActionsView.vue') }
       ]
     },
