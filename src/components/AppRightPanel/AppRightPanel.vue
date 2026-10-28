@@ -10,6 +10,7 @@ import type { BlockType } from '@/types/block'
 import BaseSetting from './BaseSetting.vue'
 import ButtonSetting from './ButtonSetting.vue'
 import ChartSetting from './ChartSetting.vue'
+import FormSetting from './FormSetting.vue'
 import HeroTitleSetting from './HeroTitleSetting.vue'
 import ImageSetting from './ImageSetting.vue'
 import NotesSetting from './NotesSetting.vue'
@@ -25,7 +26,8 @@ const settingMap: Partial<Record<BlockType, Component>> = {
   heroTitle: HeroTitleSetting,
   button: ButtonSetting,
   notes: NotesSetting,
-  chart: ChartSetting
+  chart: ChartSetting,
+  form: FormSetting
 }
 
 const settingPanel = computed(() => {

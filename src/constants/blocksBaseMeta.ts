@@ -11,7 +11,6 @@ import {
 import type { Icon } from '@icon-park/vue-next/lib/runtime'
 import { nanoid } from 'nanoid'
 
-
 import type { BlockInfo, BlockType } from '@/types/block'
 
 export const blocksBaseMetaList: { type: BlockType; label: string; icon: Icon }[] = [
@@ -71,6 +70,16 @@ export const getBlocksDefaultData = (type: BlockType): BlockInfo => {
         }
       }
     case 'form':
-      return { id, type, label: '表单', props: {} }
+      return {
+        id,
+        type,
+        label: '表单',
+        props: {
+          submitText: '提交',
+          fields: [
+            { name: 'username', label: '用户名', type: 'text', required: true }
+          ]
+        }
+      }
   }
 }

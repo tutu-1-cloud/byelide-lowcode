@@ -3,6 +3,7 @@ export type ExternalBlockType = 'button' | 'form' | 'notes'
 export type BlockType = BasicBlockType | ExternalBlockType
 export type ChartKind = 'line' | 'bar' | 'pie'
 export type QuoteBlockStatus = 'success' | 'warning' | 'error'
+export type FormFieldType = 'text' | 'number' | 'select' | 'switch'
 
 export interface BaseBlockInfo {
   id: string
@@ -45,7 +46,7 @@ export interface NotesBlockInfo extends BaseBlockInfo {
   }
 }
 
-// 这几个物料还没实现，props 先空着（注意：`{}` 是个很松的类型，详见第六节）
+// 这几个物料还没实现，props 先空着（注意：`{}` 是个很松的类型）
 export interface ViewBlockInfo extends BaseBlockInfo {
   type: 'view'
   props: Record<string, never>
@@ -62,9 +63,21 @@ export interface ChartBlockInfo extends BaseBlockInfo {
   }
 }
 
+export interface FormFieldSchema {
+  name: string
+  label: string
+  type: FormFieldType
+  required?: boolean
+  placeholder?: string
+  options?: { label: string; value: string }[]
+}
+
 export interface FormBlockInfo extends BaseBlockInfo {
   type: 'form'
-  props: Record<string, never>
+  props: {
+    fields: FormFieldSchema[]
+    submitText: string
+  }
 }
 
 export type BlockInfo =

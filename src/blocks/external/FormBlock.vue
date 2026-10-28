@@ -1,43 +1,74 @@
+<!-- 初始化initValues={
+  name: type,
+  name: type,
+  name:type
+} -->
+<!-- field通过name匹配form -->
+<!-- 遍历fields，传入field{} -->
+<!-- 提交表单时，将values提交到formValues -->
 <script setup lang="ts">
-import { h } from 'vue'
+import { useForm } from 'vee-validate'
+import { computed, inject, unref } from 'vue'
+import type { Ref } from 'vue'
+
 import type { FormBlockInfo } from '@/types/block'
 
-type Field = {
-  label: string
-  id: string
-  type: 'input' | 'select'
-}
+import FormFieldItem from './FormFieldItem.vue'
 
-defineProps<{ blockInfo: FormBlockInfo }>()
+const props = defineProps<{
+  blockInfo: FormBlockInfo
+}>()
 
-const fieldMap = {
-    input: ()=>h('input'),
-    select: ()=>h('select')
-}
+const injected = inject<boolean | Ref<boolean>>('editable', true)
+const editable = computed(() => unref(injected))
 
-const fields: Field[] = [
-  { label: '标题', id: '1', type: 'input' },
-  { label: '副标题', id: '2', type: 'select' }
-]
+const fields = computed(() => props.blockInfo.props.fields)
+
+const initialValues = Object.fromEntries(
+  fields.value.map((field) => [field.name, field.type === 'switch' ? false : ''])
+)
+
+const { handleSubmit, errors, values } = useForm({
+  initialValues,
+  validateOnMount: false
+})
+
+const onSubmit = handleSubmit((formValues) => {
+  if (editable.value) return
+  window.alert(JSON.stringify(formValues, null, 2))
+})
 </script>
 
 <template>
-  <div class="form">
-    <div class="form-item" v-for="field in fields" :key="field.id">
-      <component :is="fieldMap[field.type]" />
-    </div>
-  </div>
+  <form class="form-block" @submit.prevent="onSubmit">
+    <FormFieldItem v-for="field in fields" :key="field.name" :field="field" />
+
+    <pre v-if="false">{{ JSON.stringify({ errors, values }) }}</pre>
+
+    <button class="form-submit" type="submit">
+      {{ props.blockInfo.props.submitText }}
+    </button>
+  </form>
 </template>
 
 <style scoped>
-.form {
+.form-block {
   display: flex;
   flex-direction: column;
+  gap: 12px;
+  padding: 4px 0;
 }
 
-.form-item {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 12px;
+.form-submit {
+  align-self: flex-start;
+  height: 32px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 8px;
+  background-color: var(--color-primary);
+  color: #fff;
+  font-size: var(--font-size-normal);
+  font-weight: var(--font-weight-bold);
+  cursor: pointer;
 }
 </style>

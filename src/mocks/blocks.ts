@@ -40,6 +40,44 @@ export const blocks: BlockInfo[] = [
     }
   },
   { id: '6', type: 'button', label: '按钮', props: { content: 'Button' } },
-  { id: '7', type: 'form', label: '表单', props: {} },
+  {
+    id: '7',
+    type: 'form',
+    label: '表单',
+    props: {
+      submitText: '提交',
+      fields: [
+        {
+          name: 'username',
+          label: '用户名',
+          type: 'text',
+          required: true,
+          placeholder: '请输入用户名'
+        },
+        {
+          name: 'age',
+          label: '年龄',
+          type: 'number',
+          placeholder: '请输入数字'
+        },
+        {
+          name: 'city',
+          label: '城市',
+          type: 'select',
+          required: true,
+          options: [
+            { label: '北京', value: 'bj' },
+            { label: '上海', value: 'sh' },
+            { label: '广州', value: 'gz' }
+          ]
+        },
+        {
+          name: 'agree',
+          label: '同意条款',
+          type: 'switch'
+        }
+      ]
+    }
+  },
   { id: '8', type: 'notes', label: '笔记', props: { content: 'Notes Block' } }
 ]
