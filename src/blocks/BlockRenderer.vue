@@ -102,7 +102,8 @@ const applyDrag = <T extends any[]>(arr: T, dragResult: DropResult) => {
 }
 
 .block-wrapper-indicator.shown {
-  border: 1px dashed var(--color-gray-300);
+  border: 1px dashed var(--color-primary);
+  background-color: rgb(from var(--color-primary) r g b / 6%);
 }
 
 .block-wrapper-indicator.selected {
