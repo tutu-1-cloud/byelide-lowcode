@@ -23,6 +23,11 @@ const router = createRouter({
         { path: 'actions', name: 'actions', component: () => import('../views/ActionsView.vue') }
       ]
     },
+    {
+      path: '/runner',
+      name: 'runner',
+      component: () => import('../views/RunnerView.vue')
+    },
     { path: '/', redirect: '/app/layout' },
     // /:pathMatch动态参数，(.*)匹配任意字符，*是可重复参数，将内容按/分割为数组，将数组赋值给pathMatch
     { path: '/:pathMatch(.*)*', name: 'notFound', redirect: '/app/layout' }

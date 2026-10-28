@@ -3,7 +3,7 @@ import { Delete, Drag } from '@icon-park/vue-next'
 import { storeToRefs } from 'pinia'
 import type { DropResult } from 'smooth-dnd'
 import { dropHandlers, smoothDnD } from 'smooth-dnd'
-import { toRaw } from 'vue'
+import { inject, toRaw } from 'vue'
 
 import { SmoothDndContainer } from '@/components/SmoothDnd/SmoothDndContainer'
 import { SmoothDndDraggable } from '@/components/SmoothDnd/SmoothDndDraggable'
@@ -18,6 +18,8 @@ const appEditorStore = useAppEditorStore()
 
 const { currentBlockId, blocks } = storeToRefs(appEditorStore)
 const { selectBlock, updateBlocks,removeBlock } = appEditorStore
+
+const editable = inject('editable', true)
 
 const applyDrag = <T extends any[]>(arr: T, dragResult: DropResult) => {
   const { removedIndex, addedIndex, payload } = dragResult
@@ -51,12 +53,13 @@ const applyDrag = <T extends any[]>(arr: T, dragResult: DropResult) => {
         <component :is="$blocksMap[block.type].material" :blockInfo="block" class="block" />
 
         <div
+          v-if="editable"
           :class="[
             'block-wrapper-indicator',
             { shown: envStore.debug, selected: currentBlockId === block.id }
           ]"
         >
-          <div v-if="currentBlockId === block.id" class="block-toolbar">
+          <div v-if="editable && currentBlockId === block.id" class="block-toolbar">
             <div class="block-toolbar-item handle">
               <Drag />
             </div>
