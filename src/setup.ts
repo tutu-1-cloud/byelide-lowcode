@@ -48,13 +48,9 @@ class BlockSuite {
 
 const blockSuite = new BlockSuite()
 
-console.log('🚀 注册前 button:', blockSuite.hasBlock('button'))
-
 blockSuite.addBlock({ type: 'button', material: ButtonBlock })
 blockSuite.addBlock({ type: 'form', material: FormBlock })
 blockSuite.addBlock({ type: 'notes', material: NotesBlock })
-
-console.log('🚀 注册后 button:', blockSuite.hasBlock('button'))
 
 const blocksMap = blockSuite.getBlocksMap()
 

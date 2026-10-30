@@ -32,7 +32,7 @@ const settingMap: Partial<Record<BlockType, Component>> = {
 
 const settingPanel = computed(() => {
   if (!selectedBlock.value) return null
-  return settingMap[selectedBlock.value.type] ?? null
+  return settingMap[selectedBlock.value.type as BlockType] ?? null
 })
 
 const blockSchema = computed<Record<string, unknown> | null>(() => {

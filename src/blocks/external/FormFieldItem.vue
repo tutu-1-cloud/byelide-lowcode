@@ -1,3 +1,8 @@
+<!-- 表单字段项 -->
+<!-- 定义规则 -->
+<!-- 接受field{} -->
+<!-- 渲染 -->
+<!-- v-model="value"，自动绑定value -->
 <script setup lang="ts">
 import { defineRule, useField } from 'vee-validate'
 import { computed } from 'vue'

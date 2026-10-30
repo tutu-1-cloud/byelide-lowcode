@@ -81,7 +81,7 @@ function drawTable() {
   // 绘制可视区域的行
   for (let i = startRow; i < endRow; i++) {
     if (i < data.rows.length) {
-      const y = (i - startRow) * rowHeight + headerHeight - (scrollTop % rowHeight)
+      const y = headerHeight + (i - startRow) * rowHeight + rowHeight - (scrollTop % rowHeight)
       const rowText = `${data.rows[i].id}  ${data.rows[i].name}  ${data.rows[i].age}`
       context.value.fillText(rowText, 10, y)
     }
@@ -97,6 +97,7 @@ function handleMouseDown(event) {
 .container {
   position: relative;
   width: 420px;
+  height: 330px;
 }
 
 .scroll-container {
