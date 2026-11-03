@@ -14,5 +14,36 @@ export default defineConfig({
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
+  },
+  build: {
+  rolldownOptions: {
+    output: {
+      codeSplitting: {
+        includeDependenciesRecursively: false,   // ← 关键一行
+        groups: [
+          {
+            name: 'vue-common-lib',
+            test: /node_modules[\\/](vue|@vue|vue-router|pinia)[\\/]/,
+            priority: 50
+          },
+          {
+            name: 'vue-flow',
+            test: /node_modules[\\/]@vue-flow[\\/]/,
+            priority: 40
+          },
+          {
+            name: 'echarts',
+            test: /node_modules[\\/](echarts|zrender|vue-echarts)[\\/]/,
+            priority: 20
+          },
+          {
+            name: 'validate',
+            test: /node_modules[\\/]vee-validate[\\/]/,
+            priority: 10
+          }
+        ]
+      }
+    }
   }
+}
 })
