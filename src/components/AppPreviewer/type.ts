@@ -1,1 +1,1 @@
-export type PreviewType = 'mobile' | 'laptop'
+export type PreviewType = 'laptop'

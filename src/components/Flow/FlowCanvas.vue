@@ -70,13 +70,13 @@ function handleAddNode(type: 'input' | 'default' | 'output') {
 
 // 更新节点数据
 function handleUpdateData(id: string, patch: Record<string, unknown>) {
-  const result: Node[] = []
   for (const n of nodes.value) {
-    result.push(n.id !== id ? ({ ...n } as Node) : ({ ...n, data: { ...n.data, ...patch } } as Node))
-  }
-  nodes.value = result
-  if (selectedNode.value?.id === id) {
-    selectedNode.value = result.find((n) => n.id === id) ?? null
+    if (n.id !== id) continue
+    n.data = { ...n.data, ...patch }
+    if (selectedNode.value?.id === id) {
+      selectedNode.value.data = n.data
+    }
+    break
   }
 }
 
