@@ -19,7 +19,7 @@ export default defineConfig({
   rolldownOptions: {
     output: {
       codeSplitting: {
-        includeDependenciesRecursively: false,   // ← 关键一行
+        includeDependenciesRecursively: false,
         groups: [
           {
             name: 'vue-common-lib',
