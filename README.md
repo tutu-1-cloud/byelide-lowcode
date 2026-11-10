@@ -1,231 +1,113 @@
-# Byelide · 低代码搭建平台
+# Byelide · 低代码页面搭建平台
 
-基于 **Vue 3 + TypeScript + Vite** 的低代码页面搭建平台核心子系统，覆盖 **物料 → 编排 → 配置 → 出码 → 运行时渲染** 全链路。不是完整的 LCAP（缺发布、版本、权限），但实现了其中技术含量最高的部分：模型驱动搭建 + 统一运行时 + Schema 出码。
+<img src="docs/images/layout.gif" width="820" alt="布局编辑器" />
 
----
-
-## ✨ 功能特性
-
-### 布局编辑器（`/app/layout`）
-
-- **物料编排**：左侧物料抽屉拖入画布，支持同容器排序、跨容器拖入
-- **可视化配置**：右侧配置面板，基础信息 + 各物料专属属性，实时生效
-- **设备预览**：笔记本外框模拟器，所见即所得
-- **Schema 出码**：选中块实时展示 JSON Schema，一键复制
-
-### 数据源（`/app/dataSource`）
-
-- 数据源列表 + 详情
-- 内嵌 React 组件 `@glideapps/glide-data-grid` 渲染高性能表格
-
-### 动作 / 流程编排（`/app/actions`）
-
-- 基于 `@vue-flow` 的节点画布，支持输入 / 处理 / 输出三类节点
-- 节点连线、拖拽、缩放、小地图
-- 节点配置面板 + 白名单 Schema 导出（`exportSchema`）
-
-### 运行时（`/runner`）
-
-- 通过 `provide('editable', false)` 切换只读模式
-- 物料禁用拖拽、工具栏，表单提交才真正执行
+物料驱动的内容型页面搭建平台，覆盖物料、编排、配置、出码与运行时渲染五个环节。
 
 ---
 
-## 🧱 技术栈
+## 这是什么
 
-| 分类 | 技术                                                                    | 版本              | 说明                                             |
-| ---- | ----------------------------------------------------------------------- | ----------------- | ------------------------------------------------ |
-| 核心 | Vue                                                                     | `^3.5.44`       | `<script setup>` + 组合式 API                  |
-|      | TypeScript                                                              | `~6.0.3`        | 物料协议 / Schema / Props 全靠类型保证           |
-| 构建 | Vite                                                                    | `^8.3.4`        | 基于 **Rolldown**（Rust），冷启动 / HMR 快 |
-| 状态 | Pinia                                                                   | `^4.1.0`        | setup store，与组合式 API 同构                   |
-| 路由 | vue-router                                                              | `^5.4.0`        | 三层嵌套路由                                     |
-| 拖拽 | smooth-dnd                                                              | `0.12.1`        | 轻量，需手写 Vue 封装                            |
-| 图表 | echarts + vue-echarts                                                   | `5.6` / `7.0` | 按需注册，`chartKind` 决定类型                 |
-| 表单 | vee-validate                                                            | `^4.15.1`       | 组合式 API 风格，动态字段                        |
-| 流程 | @vue-flow/core + background/controls/minimap                            | `1.48`          | Vue 3 生态唯一成熟节点编辑器                     |
-| 表格 | React 18 + @glideapps/glide-data-grid                                   | `18` / `6.0`  | 内嵌于 Vue，高性能数据表格                       |
-| 其他 | nanoid / vue-json-pretty / copy-text-to-clipboard / @icon-park/vue-next | —                | id、Schema 展示、复制、图标                      |
+面向运营与产品人员，用拖拽与表单配置替代手写代码，完成内容型页面（介绍页、活动页、数据展示页）的搭建。
 
----
+目前已实现 8 类物料、3 层嵌套路由与 4 个功能页：布局编辑、数据源、流程编排、运行时预览。
 
-## 🚀 快速开始
+**不包含**发布、版本管理与权限体系，这三项属于平台级能力，不在本项目范围内。
+
+## 演示
+
+| 布局编辑：拖入物料、画布排序、右侧配置 | 数据源：Vue 内嵌 React 虚拟滚动表格 |
+|---|---|
+| <img src="docs/images/layout.gif" width="400" /> | <img src="docs/images/datasource.gif" width="400" /> |
+
+| 流程编排：三类节点、连线、白名单出码 |
+|---|
+| <img src="docs/images/flow.gif" width="820" /> |
+
+## 快速开始
 
 ```bash
-# 安装依赖（项目使用 pnpm）
 pnpm install
-
-# 开发
-pnpm dev
-
-# 构建（vue-tsc 类型检查 + vite build）
-pnpm build
-
-# 预览构建产物
-pnpm preview
+pnpm dev        # http://localhost:5173
+pnpm build      # vue-tsc 类型检查 + vite build
+pnpm preview    # 预览构建产物
 ```
 
-> Node 版本建议与 `@types/node@^24` 匹配。
+Node 版本建议与 `@types/node@^24` 匹配。
 
----
+## 技术要点
 
-## 📁 目录结构
+**一、物料协议与注册装配**
+以 TypeScript 可辨识联合定义 8 类物料的 props 契约，`switch (block.type)` 时类型自动收窄，契约错误在编译期即被拦截。物料经注册中心统一装配，通过 `provide` 与 `globalProperties` 双通道暴露；每个物料只接收一个协议对象，新增物料无需改动渲染器。编辑器状态收敛到单一 Pinia store，配置面板以补丁形式回传，由外壳合并。
+
+**二、拖拽编排与运行态复用**
+为命令式拖拽库 smooth-dnd 自建 Vue 适配层：自定义 `render` 函数、不接管被拖元素 DOM、卸载时调用 `dispose`。在此基础上实现物料抽屉的复制拖入、画布内排序与跨容器拖入。编辑器与运行态复用同一套物料，运行态经 `provide/inject` 注入只读标记，禁用拖拽与工具栏。
+
+**三、出码与构建治理**
+流程编排出码执行白名单转换：剔除画布内部字段，按节点类型裁剪配置，输出 `{ version, nodes, edges }`。构建侧将 Vue 运行时、流程画布、图表与校验库拆为 4 组 vendor，图表渲染器改为异步组件，页面路由改为懒加载。
+
+## 架构
+
+```mermaid
+flowchart LR
+  A[BlocksDrawer<br/>物料抽屉] -->|drop| B[BlockRenderer<br/>画布]
+  B --> C[(Pinia appEditor)]
+  C --> D[AppRightPanel<br/>配置面板]
+  D -->|patch| C
+  C --> E[物料组件 ×8]
+  F[AppRunnerRenderer<br/>运行态] -->|provide editable=false| E
+```
 
 ```
 src/
-├── blocks/                     物料：协议的实现
-│   ├── BlockRenderer.vue       块列表 + 拖拽 + 选中 + 工具栏
-│   ├── basic/                  quote / heroTitle / image / view / chart(+ChartRenderer)
-│   └── external/               button / form(+FormFieldItem) / notes
+├── blocks/              物料：协议的具体实现
+│   ├── basic/           quote / heroTitle / image / view / chart
+│   └── external/        button / form / notes
 ├── components/
-│   ├── AppNavigator.vue        顶部导航（数据源 / 布局 / 动作 / 开发模式 / 发布）
-│   ├── AppLeftPanel/           物料抽屉 + 大纲
-│   ├── AppPreviewer/           设备模拟器（笔记本框）
-│   ├── AppRightPanel/          配置面板（基础 + 专属 + 出码）
-│   ├── AppRunnerRenderer/      运行时根（provide editable=false）
-│   ├── DataSourceLeftPanel.vue 数据源侧边栏
-│   ├── Flow/                   流程编辑器（画布 / 工具栏 / 检查器 / schema）
-│   └── SmoothDnd/              smooth-dnd 的 Vue 封装
-├── constants/blocksBaseMeta.ts 物料元信息 + 默认数据工厂
-├── mocks/blocks.ts             初始块数据
-├── stores/                     appEditor / debug
-├── types/block.ts              物料协议（可辨识联合）
-├── ui/                         SettingField / SegmentedControl
-├── utils/array.ts              arrayMove 等工具
-├── views/                      AppView / PageLayoutView / DataSourceView / ActionsView / RunnerView
-├── setup.ts                    物料注册中心（BlockSuite）
-├── main.ts                     应用入口
-└── App.vue                     根组件
+│   ├── AppLeftPanel/    物料抽屉 + 大纲
+│   ├── AppPreviewer/    设备模拟器
+│   ├── AppRightPanel/   配置面板 + Schema 预览
+│   ├── AppRunnerRenderer/ 运行时根
+│   ├── Flow/            流程画布 / 检查器 / 出码
+│   └── SmoothDnd/       smooth-dnd 的 Vue 封装
+├── stores/              appEditor / env
+├── types/block.ts       物料协议（可辨识联合）
+├── setup.ts             物料注册中心
+└── views/               四个功能页
 ```
 
----
+## 性能数据
 
-## 🏗️ 架构设计
+构建产物实测（`pnpm build` 输出的 gzip 数值）：
 
-### 物料协议（可辨识联合）
+| 指标 | 优化前 | 优化后 |
+|---|---|---|
+| 入口 chunk | 231.32 KB | **7.17 KB** |
+| 首帧阻塞资源 | 231.32 KB | **63.5 KB** |
+| 产物总量 | 480 KB | 466 KB |
 
-`src/types/block.ts` 用 `type` 字面量组成联合类型，`switch (block.type)` 时自动收窄，写错类型立刻报错：
+按需 chunk：ECharts 173.92 KB、流程画布 68.83 KB、React 数据表格 134.20 KB，均不在首屏。
 
-```ts
-interface BaseBlockInfo { id: string; label: string }
+**说明**：入口降幅 97%，但产物总量基本不变（480 → 466 KB）。分包只改善缓存粒度，首屏下降来自 `defineAsyncComponent` 与路由懒加载——两者常被混为一谈，这里按实际分别列出。
 
-interface QuoteBlockInfo extends BaseBlockInfo {
-  type: 'quote'
-  props: { content: string; status: 'success' | 'warning' | 'error' }
-}
-// ... heroTitle / image / button / notes / view / chart / form
-type BlockInfo = QuoteBlockInfo | HeroTitleInfo | ... | FormBlockInfo
-```
+## 设计取舍
 
-当前支持 **8 种物料**：`quote`、`heroTitle`、`image`、`view`、`chart`、`button`、`form`、`notes`。
+**为什么拆包后首屏反而变大。**
+首次分包后首屏体积未降反升，并多出一个预加载 chunk。原因是分组规则默认递归收集依赖，把 Vue 运行时卷入了图表分组，入口 chunk 因此反向依赖图表 chunk。关闭依赖递归、显式拆出 Vue 公共分组、以优先级控制归属后，图表恢复为按需 chunk。
 
-### 物料注册中心（BlockSuite）
+**为什么在 Vue 里嵌 React。**
+数据源页需要百万行虚拟滚动，`glide-data-grid` 是现成且成熟的方案。以 `createRoot` 挂载、`unmount` 卸载、`ResizeObserver` 同步尺寸，代价是引入两个运行时，收益是不重复造轮子。
 
-`src/setup.ts` 中创建 `BlockSuite` 实例，注册 8 个物料，通过 **双通道** 暴露：
+**为什么出码只到 Schema。**
+`SchemaExporter` 展示当前选中块的 JSON 并支持复制；流程侧输出白名单裁剪后的 `{ version, nodes, edges }`。生成可运行的组件代码需要模板引擎与代码生成器，属于另一个量级的工作，因此未做。
 
-```ts
-app.provide(blocksMapSymbol, blocksMap)
-app.config.globalProperties.$blocksMap = blocksMap
-```
+## 已知边界
 
-- 模板里直接用 `$blocksMap[type].material` 渲染
-- 脚本里 `inject(blocksMapSymbol)` 获取
-- **收益**：加物料不用改渲染器
+- 数据源页为本地模拟数据（5 条列表 + 100 万行生成数据），未接后端接口
+- 「发布」按钮仅有界面，无实际逻辑
+- 出码输出 Schema，不支持导入回填
+- 「视图」物料内嵌自研 canvas 表格，固定列宽与行高、1 万行，定位为技术验证
 
-### 四条数据流
+## 技术栈
 
-```
-① 编排：BlocksDrawer ──drop──► BlockRenderer ──updateBlocks──► store.blocks
-② 配置：AppRightPanel ──emit(patch)──► updateBlockProps ──Object.assign──► block.props
-③ 渲染：store.blocks ──v-for──► BlockRenderer ──$blocksMap[type].material──► 物料组件
-④ 运行：AppRunnerRenderer ──provide('editable', false)──► 所有物料只读
-```
-
-**核心原则**：
-
-- 状态只有一份（Pinia `appEditor`），组件之间零通信，都读同一个 store
-- 数据变更走「替换 / 原地补丁」，不走「改字段」
-- 物料只认 `blockInfo` 一个 prop
-- 协议必须可序列化：不存函数、不存组件、不存类实例
-
-### 配置面板（patch 契约）
-
-```ts
-// 面板只传补丁
-emit('change', { content: '新内容' })
-// 外壳 Object.assign 合并
-store.updateBlockProps(id, patch)
-```
-
-- 面板不持有状态，值全从 `props.blockInfo` 读
-- `label`（实例名）与 `props`（内容）走两条通道：`changeLabel` / `change`
-- 面板映射用 `Partial<Record<BlockType, Component>>`，key 写错会报错，且允许只实现部分
-
-### 运行时（Runner）
-
-```ts
-// AppRunnerRenderer.vue
-provide('editable', false)
-```
-
-- 物料里 `inject('editable', true)`，编辑器默认 `true`
-- 运行态：不显示工具栏、不能拖拽、表单提交才执行
-- `provide` 的可能是 `ref`，脚本里用 `unref` 统一处理
-
----
-
-## 📦 模块说明
-
-### 布局编辑器
-
-`AppLeftPanel`（物料抽屉 + 大纲）+ `AppPreviewer`（笔记本模拟器）+ `AppRightPanel`（配置 + 出码）。
-
-### 数据源
-
-`DataSourceView` 左侧列表 + `DataSourceContent` 详情。详情页通过 `react-dom/client` 的 `createRoot` 把 React 表格组件挂到 Vue 的容器 div 上，卸载时 `root.unmount()`。
-
-### 动作 / 流程
-
-`FlowCanvas` 画布 + `FlowToolbar` 工具栏（新增节点 / 出码）+ `FlowInspector` 节点配置面板。`schema.ts` 的 `exportSchema()` 做白名单转换：
-
-```ts
-exportSchema(nodes, edges) → {
-  version: '1.0',
-  nodes: [{ id, type, label, config, position }],
-  edges: [{ id, source, target, type?, label? }]
-}
-```
-
-`data` 被展平成 `label + config`，且 config 按节点类型白名单过滤（input 只留 source）。
-
----
-
-## ⚡ 构建与性能
-
-### 分包策略（Vite 8 + Rolldown）
-
-`vite.config.ts` 使用 `build.rolldownOptions.output.codeSplitting`：
-
-```ts
-codeSplitting: {
-  includeDependenciesRecursively: false,   // 关键：避免把 vue 拖进 echarts 组
-  groups: [
-    { name: 'vue-common-lib', test: /node_modules[\\/](vue|@vue|vue-router|pinia)[\\/]/, priority: 50 },
-    { name: 'vue-flow',       test: /node_modules[\\/]@vue-flow[\\/]/, priority: 40 },
-    { name: 'echarts',        test: /node_modules[\\/](echarts|zrender|vue-echarts)[\\/]/, priority: 20 },
-    { name: 'validate',       test: /node_modules[\\/]vee-validate[\\/]/, priority: 10 }
-  ]
-}
-```
-
-> Windows 路径用 `[\\/]` 匹配反斜杠；`@vue-flow` 用 `priority` 避免被 `@vue` 规则吞掉。
-
-### 性能优化
-
-| 优化              | 做法                                                                                         | 效果                   |
-| ----------------- | -------------------------------------------------------------------------------------------- | ---------------------- |
-| 图表异步化        | `ChartBlock` 瘦成壳，echarts 逻辑搬到 `ChartRenderer.vue`，`defineAsyncComponent` 引入 | 首屏 chunk 大幅减小    |
-| 包体分析          | `rollup-plugin-visualizer` → `bundle-analysis.html`                                     | 定位体积构成           |
-| Flow 节点原地更新 | `n.data = { ...n.data, ...patch }` 代替整数组重建                                          | 改配置只重渲染目标节点 |
-
-**首屏方法论**：首屏 = 入口 chunk + 其静态依赖 chunk。`codeSplitting` 买的是缓存粒度，**动态 `import()` 才能真正降首屏**。
+Vue 3.5 · TypeScript · Vite 8（Rolldown）· Pinia · vue-router · smooth-dnd · ECharts · vee-validate · @vue-flow · React 18 + glide-data-grid（仅数据源页）
