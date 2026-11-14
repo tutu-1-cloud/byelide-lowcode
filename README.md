@@ -90,13 +90,6 @@ src/
 
 **说明**：入口降幅 97%，但产物总量基本不变（480 → 466 KB）。分包只改善缓存粒度，首屏下降来自 `defineAsyncComponent` 与路由懒加载——两者常被混为一谈，这里按实际分别列出。
 
-## 已知边界
-
-- 数据源页为本地模拟数据（5 条列表 + 100 万行生成数据），未接后端接口
-- 「发布」按钮仅有界面，无实际逻辑
-- 出码输出 Schema，不支持导入回填
-- 「视图」物料内嵌自研 canvas 表格，固定列宽与行高、1 万行，定位为技术验证
-
 ## 技术栈
 
 Vue 3.5 · TypeScript · Vite 8（Rolldown）· Pinia · vue-router · smooth-dnd · ECharts · vee-validate · @vue-flow · React 18 + glide-data-grid（仅数据源页）
